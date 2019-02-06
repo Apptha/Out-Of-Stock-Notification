@@ -1,0 +1,99 @@
+<?php
+/**
+ * Apptha
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.apptha.com/LICENSE.txt
+ *
+ * ==============================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * ==============================================================
+ * This package designed for Magento COMMUNITY edition
+ * Apptha does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * Apptha does not provide extension support in case of
+ * incorrect edition usage.
+ * ==============================================================
+ *
+ * @category    Apptha
+ * @package     Apptha_Out-Of-Stock-Notification
+ * @version     1.7
+ * @author      Apptha Team <developers@contus.in>
+ * @copyright   Copyright (c) 2014 Apptha. (http://www.apptha.com)
+ * @license     http://www.apptha.com/LICENSE.txt
+ *
+ * */ 
+ ?>
+
+<h1><?php echo $this->__('My Out of Stock Subscriptions') ?></h1>
+
+
+
+<?php
+
+//check if Enable out of stock 
+$enableOutOfStock = Mage::getStoreConfig('Outofstocknotification/general/activate_apptha_outofstock_enable');
+
+if($enableOutOfStock){
+
+$customer = Mage::getSingleton('customer/session')->getCustomer();
+
+$customerEmail = trim($customer->getEmail());
+
+
+								
+	$subscribersProductCollection = $this->getCollection();							
+
+	 echo $this->getPagerHtml(); ?>
+	<table width="100%" cellspacing="0" cellpadding="0" id="outsubscribersTable">
+		<tr>
+			<th style="width:25px;"><?php echo $this->__('Image'); ?></th>
+			<th style="width: 418px;"><?php echo $this->__('Product Name'); ?></th>
+			<th style="width: 100px;"><?php echo $this->__('Subscribed On'); ?></th>
+			<th style="width: 30px;"></th>
+		</tr>
+<?php	
+
+if(count($subscribersProductCollection)>0) {
+foreach($subscribersProductCollection as $subProducts){
+	$subId = $subProducts->getOutofstocknotificationId();
+	$pId = $subProducts->getProductId();
+	$subDate = $subProducts->getCreatedTime();
+	$products =  Mage::helper('outofstocknotification')->_getProductCollection($pId);
+	
+	$imageUrl = $this->helper('catalog/image')->init($products, 'small_image')
+							->constrainOnly(TRUE)
+                            ->keepAspectRatio(TRUE)
+                            ->keepFrame(FALSE)
+                            ->resize(75, null);
+							
+?>
+	
+	
+		<tr class="odd">
+			<td><a href="<?php echo $products->getProductUrl(); ?>" title="<?php echo $products->getName(); ?>"><img src="<?php echo $imageUrl; ?>" alt="<?php echo $products->getName(); ?>" /></a></td>
+			<td class="prdname"><a href="<?php echo $products->getProductUrl(); ?>" title="<?php echo $products->getName(); ?>"><?php echo $products->getName(); ?></td>
+			<td class="subscrib"><?php echo date('M, j Y', strtotime($subDate)); ?></td>
+			<td class="del"><a href="<?php echo Mage::helper('outofstocknotification')->_getDelUrl($subId); ?>" title="Delete" class="btn-remove2"></a></td>
+		</tr>
+		
+		
+	
+	
+	<?php } } else{ ?>
+   <tr class="no-record">
+			<td></td>
+			<td style=""><?php echo $this->__('No More Subscriptions are found'); ?></td>
+			<td></td>
+			<td></td>
+   </tr>
+<?php } ?>
+	</table>
+<?php 	echo $this->getPagerHtml(); ?>
+<?php } ?>
+
+

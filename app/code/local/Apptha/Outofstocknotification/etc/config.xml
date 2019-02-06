@@ -1,0 +1,233 @@
+<?xml version="1.0"?>
+<!-- 
+/**
+ * Apptha
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.apptha.com/LICENSE.txt
+ *
+ * ==============================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * ==============================================================
+ * This package designed for Magento COMMUNITY edition
+ * Apptha does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * Apptha does not provide extension support in case of
+ * incorrect edition usage.
+ * ==============================================================
+ *
+ * @category    Apptha
+ * @package     Apptha_Out-Of-Stock-Notification
+ * @version     1.7
+ * @author      Apptha Team <developers@contus.in>
+ * @copyright   Copyright (c) 2014 Apptha. (http://www.apptha.com)
+ * @license     http://www.apptha.com/LICENSE.txt
+ *
+ * */
+ -->
+<config>
+    <modules>
+        <Apptha_Outofstocknotification>
+            <version>0.1.7</version>
+        </Apptha_Outofstocknotification>
+    </modules>
+      
+    <frontend>
+        <routers>
+            <outofstocknotification>
+                <use>standard</use>
+                <args>
+                    <module>Apptha_Outofstocknotification</module>
+                    <frontName>outofstocknotification</frontName>
+                </args>
+            </outofstocknotification>
+        </routers>
+        <layout>
+            <updates>
+                <outofstocknotification>
+                    <file>outofstocknotification.xml</file>
+                </outofstocknotification>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Apptha_Outofstocknotification>
+                    <files>
+                        <default>Apptha_OutofstockNotification.csv</default>
+                    </files>
+                </Apptha_Outofstocknotification>
+            </modules>
+        </translate>
+    </frontend>
+    <admin>
+        <routers>
+            <outofstocknotification>
+                <use>admin</use>
+                <args>
+                    <module>Apptha_Outofstocknotification</module>
+                    <frontName>outofstocknotificationadmin</frontName>
+                </args>
+            </outofstocknotification>
+        </routers>
+    </admin>
+    <adminhtml>
+        <menu>
+            <outofstocknotification module="outofstocknotification">
+                <title>Out of stock Notification</title>
+                <sort_order>71</sort_order>               
+                <children>
+                    <items module="outofstocknotification">
+                        <title>Manage Notified Details</title>
+                        <sort_order>0</sort_order>
+                        <action>outofstocknotification/adminhtml_outofstocknotification</action>
+                    </items>
+                </children>
+            </outofstocknotification>
+        </menu> 
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <Apptha_Outofstocknotification>
+                            <title>Outofstocknotification Module</title>
+                            <sort_order>10</sort_order>
+                        </Apptha_Outofstocknotification>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        <layout>
+            <updates>
+                <outofstocknotification>
+                    <file>outofstocknotification.xml</file>
+                </outofstocknotification>
+            </updates>
+        </layout>       
+       <translate>
+            <modules>
+                <Apptha_Outofstocknotification>
+                    <files>
+                        <default>Apptha_OutofstockNotification.csv</default>
+                    </files>
+                </Apptha_Outofstocknotification>
+            </modules>
+        </translate>
+        
+    </adminhtml>   
+    <global>
+        <blocks>
+            <catalog>
+                <rewrite>
+                    <product_view_type_configurable>Apptha_Outofstocknotification_Block_Product_View_Type_Configurable</product_view_type_configurable>
+                </rewrite>
+            </catalog>
+        </blocks>
+        
+        <models>
+            <outofstocknotification>
+                <class>Apptha_Outofstocknotification_Model</class>
+                <resourceModel>outofstocknotification_mysql4</resourceModel>
+            </outofstocknotification>
+            <outofstocknotification_mysql4>
+                <class>Apptha_Outofstocknotification_Model_Mysql4</class>
+                <entities>
+                    <outofstocknotification>
+                        <table>outofstocknotification</table>
+                    </outofstocknotification>
+                </entities>
+            </outofstocknotification_mysql4>
+        </models>
+        <resources>
+            <outofstocknotification_setup>
+                <setup>
+                    <module>Apptha_Outofstocknotification</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </outofstocknotification_setup>
+            <outofstocknotification_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </outofstocknotification_write>
+            <outofstocknotification_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </outofstocknotification_read>
+        </resources>
+        <blocks>
+            <outofstocknotification>
+                <class>Apptha_Outofstocknotification_Block</class>
+            </outofstocknotification>
+	            
+        </blocks>
+        <helpers>
+            <outofstocknotification>
+                <class>Apptha_Outofstocknotification_Helper</class>
+            </outofstocknotification>
+        </helpers>
+        
+        <events>
+            <catalog_product_save_after>
+                <!-- this event is use to exe a function in our model/obersver.php/sendMailToNotifiedCustomer() wil exe after click on save button in inventory -->
+                <observers>
+                    <outofstocknotification>
+                        <type>singleton</type>
+                        <class>outofstocknotification/observer</class>
+                        <method>sendMailToNotifiedCustomerOk</method>
+                    </outofstocknotification>
+                </observers>
+            </catalog_product_save_after>
+         
+            <checkout_onepage_controller_success_action>
+                <!-- this event is use to exe a function in our model/obersver.php/sendMailToNotifiyMerchant() wil exe  -->
+                <observers>
+                    <outofstocknotification>
+                        <type>singleton</type>
+                        <class>outofstocknotification/observer</class>
+                        <method>sendMailToNotifiyMerchant</method>
+                    </outofstocknotification>
+                </observers>
+            </checkout_onepage_controller_success_action>
+        </events>
+        <template>
+            <email>
+                <outofstock_email_template module="outofstocknotification">
+                    <label>Out of Stock Notification Mail</label>
+                    <file>apptha_outofstock/apptha_outofstock_template.html</file>
+                    <type>html</type>
+                </outofstock_email_template>
+            
+                <Outofstocknotification_general_outofstock_admin_template module="outofstocknotification">
+                    <label>Out of Stock Notification Mail</label>
+                    <file>apptha_outofstock/apptha_outofstock_admin_template.html</file>
+                    <type>html</type>
+                </Outofstocknotification_general_outofstock_admin_template>
+            </email>
+        </template>	
+     
+     
+    </global>
+    
+    <default>
+        <Outofstocknotification>
+            <general>
+                <activate_apptha_outofstock_notifymes>Notify me when this product is in stock:</activate_apptha_outofstock_notifymes>
+                <activate_apptha_outofstock_notify_success_mes>You will be Notified by Email when it becomes available. Thank you for your interest in this Item.</activate_apptha_outofstock_notify_success_mes>
+            </general>
+     
+        </Outofstocknotification>
+    </default>
+
+
+
+</config>

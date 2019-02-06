@@ -1,0 +1,75 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="402" align="center" valign="top"><table width="600"  cellpadding="0" cellspacing="0" style="border: 2px solid #ccc;">
+      <tr>
+        <td height="398" align="left" valign="top">
+        <table width="600" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="25" height="82" >&nbsp;</td>
+            <td width="575" style="font-size:25px;color:#fff;font-weight:bold;">
+                <a style="text-decoration: none;" href="{{var siteLink}}"><img src="{{skin url='images/logo_email.gif' _area='frontend'}}" alt="{{var storeName}}" border="0" /></a> </td>
+          </tr>
+        </table>
+        <table width="600" height="98" border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="25" height="108" rowspan="3">&nbsp;</td>
+            <td width="553" height="15">&nbsp;</td>
+            <td width="22" rowspan="3">&nbsp;</td>
+          </tr>
+          <tr>
+            <td height="61"><span style="font-size: 17px; color: #000; font-weight: bold; font-family: arial">Dear Merchant,
+              <br />
+              <p style="background-color: #f6f5f5;padding: 10px;">
+              <span style="font-size: 11.0pt; color:#0099FF; font-family: arial">It is to inform you that the inventory is low in your stock at our page. I advice you to replenish the stocks as soon as possible.
+              </span></p></span></td>
+          </tr>
+          <tr>
+            <td height="61">            
+              
+                <span style="font-size: 10.0pt; font-family: arial">The remaining stock in {{var storeName}} is now less than the specified minimum of <strong>{{var thresholdQty}}</strong> </span>
+
+              
+            </td>
+          </tr>
+          
+        </table>
+         
+                        <table width="100%" cellpadding="0" border="0" cellspacing="0" style="padding: 5px 25px 0 25px;">
+                            <tbody>
+                                <tr style="background-color:#000;">
+
+                                    <td valign="middle" width="15%" style="text-align: left;padding: 5px 0;border-bottom: 1px solid #eee; color:#fff; font-family: arial; font-size: 13px; padding-left: 5px; font-weight: bold;"></td>
+                                    <td valign="middle" width="45%" style="text-align: left;padding: 5px 0;border-bottom: 1px solid #eee; color:#fff; font-family: arial; font-size: 13px; padding-left: 5px;font-weight: bold;">Item</td>
+                                    <td valign="middle" width="20%" style="text-align: left;padding: 5px 0;border-bottom: 1px solid #eee; color:#fff; font-family: arial; font-size: 13px; padding-left: 5px; font-weight: bold;">Remaining Qty</td>
+                                    <td valign="middle" width="20%" style="text-align: left;;padding: 5px 0;border-bottom: 1px solid #eee; color:#fff; font-family: arial; font-size: 13px; padding-left: 5px; font-weight: bold;">Unit Price</td>
+                                </tr>                        
+                                <tr>
+
+                                    <td valign="middle" style="padding: 6px 0 4px;border-bottom: 1px solid #eee;">
+                                        <a target="_new" href="{{var productUrl}}" >
+                                            <img title="{{var productName}}" width="75" height="75" alt="{{var productName}}" src="{{var productImg}}" id="apptha_notify_outofstock_img" />
+                                        </a>            
+                                    </td>
+                                    <td valign="middle" style="padding: 0;border-bottom: 1px solid #eee;">
+                                        <a style="text-decoration: none;color: #333;font-size: 12px;font-weight: normal; font-family: arial;" href="{{var productUrl}}">{{var productName}}</a>
+                                    </td>
+                                    <td valign="middle" style="text-align: center;padding:0;border-bottom: 1px solid #eee; font-weight: normal; font-family: arial;" >{{var productQty}}</td>
+                                    <td valign="middle" style="text-align: center;padding:0px;color: #09f;font-weight: bold;border-bottom: 1px solid #eee; font-weight: normal; font-family: arial;">{{var productPrice}} </td>
+                                </tr>                        
+                            </tbody>
+                        </table>
+                            
+        <table width="600" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+              <td height="20"></td>
+          </tr>
+            <tr>
+              <td style="padding:0 2px;">{{var productDescr}}</td>
+          </tr>
+        </table>
+            
+        </td>
+      </tr>
+    </table></td>
+  </tr>
+</table>

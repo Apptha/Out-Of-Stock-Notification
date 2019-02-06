@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<!-- 
+/**
+ * Apptha
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.apptha.com/LICENSE.txt
+ *
+ * ==============================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * ==============================================================
+ * This package designed for Magento COMMUNITY edition
+ * Apptha does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * Apptha does not provide extension support in case of
+ * incorrect edition usage.
+ * ==============================================================
+ *
+ * @category    Apptha
+ * @package     Apptha_Out-Of-Stock-Notification
+ * @version     1.7
+ * @author      Apptha Team <developers@contus.in>
+ * @copyright   Copyright (c) 2014 Apptha. (http://www.apptha.com)
+ * @license     http://www.apptha.com/LICENSE.txt
+ *
+ * */
+ -->
+<config>
+    <tabs>
+        <Apptha translate="label" module="outofstocknotification">
+            <label>Apptha</label>
+            <sort_order>101</sort_order>
+        </Apptha>
+    </tabs>
+    <sections>
+        
+        <Outofstocknotification translate="label" module="outofstocknotification">
+            <tab>Apptha</tab>
+            <label>Out Of Stock Notification</label>
+            <frontend_type>text</frontend_type>
+            <sort_order>121</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <general translate="label" module="outofstocknotification">
+                    <label>Stock Notification</label>
+                    <frontend_type>text</frontend_type>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                      
+			<activate_apptha_outofstock_notifymes translate="label" >
+                            <label>Message for Notification</label>
+                            <frontend_type>Text</frontend_type>
+                            <validate>required-entry</validate>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Enter message that displays regarding the Out of stock Notification to user </comment>
+                        </activate_apptha_outofstock_notifymes>
+                        <activate_apptha_outofstock_notify_success_mes translate="label" >
+                            <label>Response Message After Notification</label>
+                            <frontend_type>Text</frontend_type>
+                             <validate>required-entry</validate>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Enter response message that should display when the customer enters their email id and submit Notification request for the Out of stock product</comment>
+                        </activate_apptha_outofstock_notify_success_mes>
+                        
+                        <activate_apptha_outofstock_enable translate="label">
+                            <label>Enable Out of stock Notification</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Show / Hide the Out of stock notification in front end</comment>
+                        </activate_apptha_outofstock_enable>
+			<delete_apptha_outofstock_mail translate="label">
+                            <label>Delete User's Mail ID in Database</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <default>1</default>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select Yes to delete the user's email id from Database once the notification  mail is sent</comment>
+                        </delete_apptha_outofstock_mail>
+                        
+                        <merchant_apptha_outofstock_mail translate="label">
+                            <label>Enable Out of stock Notification to Merchant</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <default>0</default>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Sets the threshold level to trigger Out of Stock Notification</comment>
+                        </merchant_apptha_outofstock_mail>
+                        
+                        <stocklimit_apptha_outofstock_mail translate="label">
+                            <label>Threshold level</label>
+                            <frontend_type>text</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <validate>required-entry validate-number validate-greater-than-zero</validate>
+                            <sort_order>5</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Stock level Reached</comment>
+                            <depends><merchant_apptha_outofstock_mail>1</merchant_apptha_outofstock_mail></depends>
+                        </stocklimit_apptha_outofstock_mail>
+                        
+                        <outofstock_admin_template translate="label">
+                            <label>Notify Email Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select the email template to be sent to users</comment>
+                            <depends><merchant_apptha_outofstock_mail>1</merchant_apptha_outofstock_mail></depends>
+                        </outofstock_admin_template>
+                     </fields>
+                </general>
+                <outofstock_email translate="label" module="outofstocknotification">
+                    <label>Email Options</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>122</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <outofstock_sender_email_identity translate="label">
+                            <label>Email Sender</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_identity</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </outofstock_sender_email_identity>
+                        <outofstock_credit_template translate="label">
+                            <label>Notify Email Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Select the email template to be sent to users</comment>
+                        </outofstock_credit_template>
+                    </fields>
+                </outofstock_email>
+ 
+            </groups>
+        </Outofstocknotification>
+    </sections>
+</config>

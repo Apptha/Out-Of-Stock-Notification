@@ -1,0 +1,225 @@
+<?php
+/**
+ * Apptha
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.apptha.com/LICENSE.txt
+ *
+ * ==============================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * ==============================================================
+ * This package designed for Magento COMMUNITY edition
+ * Apptha does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * Apptha does not provide extension support in case of
+ * incorrect edition usage.
+ * ==============================================================
+ *
+ * @category    Apptha
+ * @package     Apptha_Out-Of-Stock-Notification
+ * @version     1.7
+ * @author      Apptha Team <developers@contus.in>
+ * @copyright   Copyright (c) 2014 Apptha. (http://www.apptha.com)
+ * @license     http://www.apptha.com/LICENSE.txt
+ *
+ * */ 
+?>
+
+<?php
+
+$notifyMail = Mage::getStoreConfig('Outofstocknotification/general/activate_apptha_outofstock_email');
+$enableOutOfStock = Mage::getStoreConfig('Outofstocknotification/general/activate_apptha_outofstock_enable');
+$enableOutOfStock = intval($enableOutOfStock);
+$notifyRequest = '';
+$notifyRequest = Mage::getStoreConfig('Outofstocknotification/general/activate_apptha_outofstock_notifymes');
+
+$storeName = Mage::getStoreConfig("general/store_information/name");
+$_product = $this->getProduct();
+$productId = $_product->getId();
+$productName = $_product->getName();
+
+$stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($_product);
+
+$childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts('null', $_product);
+$outofstock_instock = 0;
+$getIsInStock = array();
+
+
+if (!empty($childProducts)) { 
+    foreach ($childProducts as $childVal) {
+         $availability = (int) $childVal->isAvailable();
+
+        $getIsInStock[] = (int) $childVal->getIsInStock();
+        
+        if ($availability == 0) {
+            $outOfStock = true;
+            break;
+        }
+        
+    }
+
+         if (in_array("1", $getIsInStock)) {
+              $outofstock_instock = 1;
+          }
+         
+         if (in_array("0", $getIsInStock) || $stock->getIsInStock()==0) {
+              $outofstock_instock = 0;
+              $outOfStock = true;
+          }
+           
+          
+
+}
+
+if (($_product->isAvailable() || $outofstock_instock == "1" )){
+       
+?>
+    <p class="availability in-stock"><?php echo $this->__('Availability:') ?> <span><?php echo $this->__('In stock') ?></span></p>
+<?php }else{
+    
+?><p class="availability out-of-stock"><?php echo $this->__('Availability:') ?> <span><?php echo $this->__('Out of stock') ?></span></p>
+
+<?php
+} if ((empty($childProducts))&& $_product->isAvailable() != "1" && $stock->getIsInStock() == 0) { 
+ ?>
+
+            <input type="hidden" value="<?php echo $productId; ?>" id='productId' name ='productId' />
+             <div class="block-body apptha-outofstock-block-body line" id='responceMesPlace'>
+                <span id='contentofnotification' >
+                    <div id="notify_conform" class="notify_conform"></div>
+                    <span id="notify_message"><?php echo $notifyRequest; ?></span>
+                    <div id="padding_div" style="margin-top: 4px;" >
+                        <span id="notify_error" class="line notify_error"></span>
+
+
+                        <?php if(!empty($childProducts)){ ?>
+                            <span style="display:block; padding: 2px 0;"> <b><?php echo $this->__('Product') ?>:</b> <select name="productIdName" id="productIdName" onChange="productNameSet(this.value);">
+                                <option value=""><?php echo $this->__('select') ?></option>
+                                <?php
+                                   if (!empty($childProducts)) {
+                                    foreach ($childProducts as $childVal) {
+
+                                        if($childVal->isAvailable() == 0){
+                                            $productNameVal=$childVal->getName();
+                                            $productStoreVal=$childVal->getUrlInStore();
+                                            $childId=$childVal->getId();
+                                            $productVal=$childVal->getId().'@#-'.$productNameVal.'@#-'.$productStoreVal.'@#-'.$crtlPageUrl;
+                                            echo "<option value='$productVal'>$productNameVal</option>";
+                                        }
+                                    }
+                                }
+                                ?>
+                              </select>
+                            </span>
+                     <?php } ?>
+                        <span id="notify_submit"> <b><?php echo $this->__('Email')?>:</b>
+                            <input id="outofstock_email" type="text"  name="outofstock_email"  >
+                            <button class="button" id="ajaxButton" title="<?php echo $this->__('Subscribe')?>" type="submit" <?php if(!empty($childProducts)){ ?> onclick="return newfunctionVal();" <?php }else{ ?>onclick="return stockNotifyValidate('<?php echo $productId; ?>','');" <?php } ?> >
+                                <span><span><?php echo $this->__('Notify Me'); ?></span></span>
+                            </button> <div id='ajaximageshowing' class="ajaxreloadimage" ></div>
+                            <div style="display: none;color: red;font-size: 11px;" id="outofstock_notify_error" > <?php echo $this->__('Please specify a valid Email Address'); ?><br></div>
+                             <span style="color: red;font-size: 11px;margin-left: 43px;" id="notify_errorVal"></span>
+                        </span>
+
+                    </div>
+                </span>
+            </div>
+                   
+    <?php
+}
+
+   if (($enableOutOfStock)&& isset($outOfStock)  && $stock->getIsInStock() != "0" ){
+     
+     
+    
+?>
+
+            <input type="hidden" value="<?php echo $productId; ?>" id='productId' name ='productId' />
+ 
+            <div class="block-body apptha-outofstock-block-body line" id='responceMesPlace'>
+                <span id='contentofnotification' >
+                    <div id="notify_conform" class="notify_conform"></div>
+                    <span id="notify_message"><?php echo $notifyRequest; ?></span>
+                    <div id="padding_div" style="margin-top: 4px;" >
+                        <span id="notify_error" class="line notify_error"></span>
+
+
+                        <?php if(!empty($childProducts)){ ?>
+                            <span style="display:block; padding: 2px 0;"> <b><?php echo $this->__('Product') ?>:</b> 
+                                <select name="productIdName" id="productIdName" onChange="productNameSet(this.value);">
+                                <option value=""><?php echo $this->__('select') ?></option>
+                                <?php
+                                   if (!empty($childProducts)) {
+                                    foreach ($childProducts as $childVal) {
+                                        
+                                        if($childVal->isAvailable() == 0){ $productNameVal=$childVal->getName()."(Out-Stock)";  } else { $productNameVal=$childVal->getName()."(In-Stock)"; }
+                                           
+                                            $productStoreVal=$childVal->getUrlInStore();
+                                            $childId=$childVal->getId();
+                                            $productVal=$childVal->getId().'@#-'.$productNameVal.'@#-'.$_product->getProductUrl().'@#-'.$crtlPageUrl; 
+                                            echo "<option value='$productVal'>$productNameVal</option>";
+                                    }
+                                }
+                                ?>
+                              </select>
+                            </span>
+                     <?php } ?>
+                        <span id="notify_submit" style=""> <b><?php echo $this->__('Email')?>:</b>
+                            <input id="outofstock_email" type="text"  name="outofstock_email"  >
+                            <button class="button" id="ajaxButton" title="<?php echo $this->__('Subscribe')?>" type="submit" <?php if(!empty($childProducts)){ ?> onclick="return newfunctionVal();" <?php }else{ ?>onclick="return stockNotifyValidate('<?php echo $productId; ?>','');" <?php } ?> >
+                                <span><span><?php echo $this->__('Notify Me'); ?></span></span>
+                            </button> <div id='ajaximageshowing' class="ajaxreloadimage" ></div>
+                            <div style="display: none;color: red;font-size: 11px;" id="outofstock_notify_error" > <?php echo $this->__('Please specify a valid Email Address'); ?><br></div>
+                             <span style="color: red;font-size: 11px;margin-left: 43px;" id="notify_errorVal"></span>
+                        </span>
+                        
+                    </div>
+                </span>
+            </div>                    
+                   
+<?php  //if out of stock endable
+} if (($enableOutOfStock)&& isset($outOfStock)  && $stock->getIsInStock() == 0 ){   ?>
+           
+            <input type="hidden" value="<?php echo $productId; ?>" id='productId' name ='productId' />
+ 
+            <div class="block-body apptha-outofstock-block-body line" id='responceMesPlace'>
+                <span id='contentofnotification' >
+                    <div id="notify_conform" class="notify_conform"></div>
+                    <span id="notify_message"><?php echo $notifyRequest; ?></span>
+                    <div id="padding_div" style="margin-top: 4px;" >
+                        <span id="notify_error" class="line notify_error"></span>
+
+
+                        
+                        <span id="notify_submit" style=""> <b><?php echo $this->__('Email')?>:</b>
+                            <input id="outofstock_email" type="text"  name="outofstock_email"  >
+                            <button class="button" id="ajaxButton" title="<?php echo $this->__('Subscribe')?>" type="submit" onclick="return stockNotifyValidate('<?php echo $productId; ?>','');"  >
+                                <span><span><?php echo $this->__('Notify Me'); ?></span></span>
+                            </button> <div id='ajaximageshowing' class="ajaxreloadimage" ></div>
+                            <div style="display: none;color: red;font-size: 11px;" id="outofstock_notify_error" > <?php echo $this->__('Please specify a valid Email Address'); ?><br></div>
+                             <span style="color: red;font-size: 11px;margin-left: 43px;" id="notify_errorVal"></span>
+                        </span>
+
+                    </div>
+                </span>
+            </div>
+                   
+                    
+<?php     
+}?>
+                  
+<?php echo $this->getChildHtml('product_type_data_extra') ?>
+<?php echo $this->getPriceHtml($_product) ?>
+<script type="text/javascript">
+   
+
+
+var crtlPageUrl = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . 'outofstocknotification/index/storeNotificationProductData';   ?>';
+Translator.add('AlreadyNotified','<?php echo $this->__('This Mail Id Already Notified'); ?>');
+
+</script>
+

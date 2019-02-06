@@ -1,0 +1,100 @@
+<?php
+/**
+ * Apptha
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.apptha.com/LICENSE.txt
+ *
+ * ==============================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * ==============================================================
+ * This package designed for Magento COMMUNITY edition
+ * Apptha does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * Apptha does not provide extension support in case of
+ * incorrect edition usage.
+ * ==============================================================
+ *
+ * @category    Apptha
+ * @package     Apptha_Out-Of-Stock-Notification
+ * @version     1.7
+ * @author      Apptha Team <developers@contus.in>
+ * @copyright   Copyright (c) 2014 Apptha. (http://www.apptha.com)
+ * @license     http://www.apptha.com/LICENSE.txt
+ *
+ * */
+?>
+<?php $_product = $this->getProduct();
+
+$notifyMail  = Mage::getStoreConfig('Outofstocknotification/general/activate_apptha_outofstock_email');
+$enableOutOfStock  = Mage::getStoreConfig('Outofstocknotification/general/activate_apptha_outofstock_enable');
+$enableOutOfStock = intval($enableOutOfStock);
+$notifyRequest = Mage::getStoreConfig('Outofstocknotification/general/activate_apptha_outofstock_notifymes');
+
+$storeName = Mage::getStoreConfig("general/store_information/name");  
+$_product = $this->getProduct();
+$productId =  $_product->getId();
+
+$productName = $_product->getName();
+
+
+$productUrl = $_product->getUrlInStore();
+
+$baseUrl     = Mage::getUrl('',array('_secure'=>true));
+$crtlPageUrl = $baseUrl.'outofstocknotification/index/storeNotificationProductData';
+
+?>
+
+<?php if($_product->isSaleable()): ?>
+<script type="text/javascript">
+//<![CDATA[
+    var bundle = new Product.Bundle(<?php echo $this->getJsonConfig() ?>);
+//]]>
+var crtlPageUrl = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . 'outofstocknotification/index/storeNotificationProductData';   ?>';
+Translator.add('AlreadyNotified','<?php echo $this->__('This Mail Id Already Notified'); ?>');
+</script>
+<?php endif; ?>
+<?php if ($_product->isAvailable()): ?>
+    <p class="availability in-stock"><?php echo $this->helper('catalog')->__('Availability:') ?> <span><?php echo $this->helper('catalog')->__('In stock') ?></span></p>
+<?php else: ?>
+    <p class="availability out-of-stock"><?php echo $this->helper('catalog')->__('Availability:') ?> <span><?php echo $this->helper('catalog')->__('Out of stock') ?></span></p>
+<?php 
+if($enableOutOfStock){
+?>
+
+<div class="block-body apptha-outofstock-block-body line" id='responceMesPlace'>
+    <span id='contentofnotification' >
+	   	 <div id="notify_conform" class="notify_conform"></div>
+	     <span id="notify_message"><?php echo $notifyRequest; ?></span>
+      <div id="padding_div" style="height: 33px;margin-top: 4px;" > 
+	     <span id="notify_error" class="line notify_error"></span>
+	     
+	     <span id="notify_submit"> <b> <?php echo $this->__('Email')?> :</b>
+	     <input id="outofstock_email" type="text"  name="outofstock_email"  >
+	     <button class="button" title="Subscribe" type="submit" onclick="return stockNotifyValidate('<?php echo $productId; ?>','')" >
+	     <span><span><?php echo $this->__('Notify Me'); ?></span></span>
+	     </button> <div id='ajaximageshowing' class="ajaxreloadimage" ></div>
+	     <div style="display: none;color: red;font-size: 11px;" id="outofstock_notify_error" > <?php echo $this->__('Please specify a valid Email Address'); ?><br></div>
+	      </span>
+	    
+	</div>
+	</span>
+</div>
+<?php } //if out of stock endable
+    
+ endif; ?>
+<div class="price-box-bundle">
+    <?php echo $this->getPriceHtml($_product) ?>
+</div>
+<?php echo $this->getChildHtml('bundle_prices') ?>
+
+    <script type="text/javascript">
+
+var crtlPageUrl = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . 'outofstocknotification/index/storeNotificationProductData';   ?>';
+Translator.add('AlreadyNotified','<?php echo $this->__('This Mail Id Already Notified'); ?>');
+
+</script>

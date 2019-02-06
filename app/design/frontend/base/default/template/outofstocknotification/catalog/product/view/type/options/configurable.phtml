@@ -1,0 +1,184 @@
+<?php
+/**
+ * Apptha
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.apptha.com/LICENSE.txt
+ *
+ * ==============================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * ==============================================================
+ * This package designed for Magento COMMUNITY edition
+ * Apptha does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * Apptha does not provide extension support in case of
+ * incorrect edition usage.
+ * ==============================================================
+ *
+ * @category    Apptha
+ * @package     Apptha_Out-Of-Stock-Notification
+ * @version     1.7
+ * @author      Apptha Team <developers@contus.in>
+ * @copyright   Copyright (c) 2014 Apptha. (http://www.apptha.com)
+ * @license     http://www.apptha.com/LICENSE.txt
+ *
+ * */
+?>
+<?php
+$_product = $this->getProduct();
+$_attributes = Mage::helper('core')->decorateArray($this->getAllowAttributes());
+$notifyRequest = '';
+$notifyRequest = Mage::getStoreConfig('Outofstocknotification/general/activate_apptha_outofstock_notifymes');
+$enableOutOfStock = Mage::getStoreConfig('Outofstocknotification/general/activate_apptha_outofstock_enable');
+$enableOutOfStock = intval($enableOutOfStock);
+if ($_product->isSaleable() && count($_attributes) && ($enableOutOfStock)):
+    ?>
+    <div class="block-body apptha-outofstock-block-body line" id='responceMesPlace1' style="">   
+
+        <div id="notify_conform1" class="notify_conform"></div>
+        <span id="notify_message1" style="display:none; margin-top: 10px;"><?php echo $notifyRequest; ?></span>
+        <div id="padding_div1" style="margin-top: 4px;" >
+            <span id="notify_error1" class="line notify_error1"></span></div>
+        <input type="hidden" value="<?php echo $productId; ?>" id='productId1' name ='productId' />
+
+        <span id="notify_submit1" style="display:none;"> <b><?php echo $this->__('Email') ?>:</b>
+            <input id="outofstock_email1" type="text"  name="outofstock_email1"  style="margin:0;" >
+            <button class="button" id="ajaxButton1" title="Subscribe" type="submit">
+                <span><span><?php echo $this->__('Notify Me'); ?></span></span>
+            </button> <div id='ajaximageshowing1' class="ajaxreloadimage" ></div>
+            <div style="display: none;color: red;font-size: 11px;" id="outofstock_notify_error1" > <?php echo $this->__('Please specify a valid Email Address'); ?><br></div>
+            <span style="color: red;font-size: 11px;margin-left: 43px;" id="notify_errorVal1"></span>
+        </span>
+
+    </div>
+
+    <dl>
+        <?php foreach ($_attributes as $_attribute): ?>
+            <dt><label class="required"><em>*</em><?php echo $_attribute->getLabel() ?></label></dt>
+            <dd<?php if ($_attribute->decoratedIsLast) { ?> class="last"<?php } ?>>
+                <div class="input-box">
+                    <select name="super_attribute[<?php echo $_attribute->getAttributeId() ?>]" id="attribute<?php echo $_attribute->getAttributeId() ?>" class="required-entry super-attribute-select"  onChange="notifyMe(this.value, this.options[this.selectedIndex].innerHTML);">
+                        <option><?php echo $this->__('Choose an Option...') ?></option>
+                    </select>
+                </div>
+            </dd>
+        <?php endforeach; ?>
+    </dl>
+<script type="text/javascript">
+document.observe('dom:loaded', function() { //console.log("loaded!");
+    $('responceMesPlace').hide();
+});
+var spConfig = new Product.Config(<?php echo $this->getJsonConfig() ?>);
+spConfig.getIdOfSelectedProduct = function()  // function for get child product id 
+{
+    var existingProducts = new Object();
+    for (var i = this.settings.length - 1; i >= 0; i--)
+    {
+        var selected = this.settings[i].options[this.settings[i].selectedIndex];
+        if (selected.config)
+        {
+            for (var iproducts = 0; iproducts < selected.config.products.length; iproducts++)
+            {
+                var usedAsKey = selected.config.products[iproducts] + "";
+                if (existingProducts[usedAsKey] == undefined)
+                {
+                    existingProducts[usedAsKey] = 1;
+                }
+                else
+                {
+                    existingProducts[usedAsKey] = existingProducts[usedAsKey] + 1;
+                }
+            }
+        }
+    }
+    for (var keyValue in existingProducts)
+    {
+        for (var keyValueInner in existingProducts)
+        {
+            if (Number(existingProducts[keyValueInner]) < Number(existingProducts[keyValue]))
+            {
+                delete existingProducts[keyValueInner];
+            }
+        }
+    }
+    var sizeOfExistingProducts = 0;
+    var currentSimpleProductId = "";
+    for (var keyValue in existingProducts)
+    {
+        currentSimpleProductId = keyValue;
+        sizeOfExistingProducts = sizeOfExistingProducts + 1
+    }
+    if (sizeOfExistingProducts == 1)
+    {
+        //alert("Selected product is: "+currentSimpleProductId)
+        return currentSimpleProductId;
+
+    }
+
+}
+
+function notifyMe(val, sel)
+{
+    var stockNotifyConfigure = spConfig.getIdOfSelectedProduct();
+    var outstockArr = sel.split('(');
+    var stockstatus = outstockArr[1].slice(0, outstockArr[1].lastIndexOf(")"));
+    
+    if (stockstatus.trim() != 'in stock') {
+        document.getElementById('notify_message1').style.display = "block";
+        document.getElementById('notify_submit1').style.display = "block";
+
+        if (val != '') {
+
+            $$('.add-to-cart').each(function(elem) {
+                elem.hide();
+            });
+            document.getElementById('productId1').value = val;
+            document.getElementById('notify_errorVal1').innerHTML = '';
+            document.getElementById('ajaxButton1').setAttribute("onclick", "return stockNotifyValidate('" + stockNotifyConfigure + "','1')");
+
+
+            $$('.product-options-bottom .price-box').each(function(pricebox) {
+                span = document.createElement('span');
+                span.id = 'appthastock-status';
+                span.style.paddingLeft = '10px';
+                span.innerHTML = stockstatus;
+                pricebox.appendChild(span);
+            }.bind(this));
+
+
+
+        }
+    } else {
+        $$('.add-to-cart').each(function(elem) {
+            elem.show();
+        });
+        if ($('appthastock-status'))
+        {
+            $('appthastock-status').remove();
+        }
+        document.getElementById('notify_submit1').style.display = "none";
+        document.getElementById('notify_message1').style.display = "none";
+    }
+}
+
+function newfunctionVal() {
+    if (document.getElementById('productIdName').value == '') {
+        document.getElementById('notify_errorVal').innerHTML = '<?php echo $this->__('Please select product to notify') ?>';
+        return false;
+    } else {
+        document.getElementById('notify_errorVal').innerHTML = '';
+        return true;
+    }
+}
+var crtlPageUrl = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . 'outofstocknotification/index/storeNotificationProductData'; ?>';
+Translator.add('AlreadyNotified', '<?php echo $this->__('This Mail Id Already Notified'); ?>');
+
+</script>
+<?php endif; ?>
+
+
+
